@@ -26,10 +26,6 @@ if [ -e "/requirements.txt" ]; then
     $(which pip) install --user -r /requirements.txt
 fi
 
-if [ -e "/variables.json" ]; then
-    $CMD variables -i /variables.json
-fi
-
 # Update airflow config - Fernet key
 sed -i "s|\$FERNET_KEY|$FERNET_KEY|" "$AIRFLOW_HOME"/airflow.cfg
 
@@ -77,6 +73,9 @@ then
   if [ "$1" = "webserver" ]; then
     echo "Initialize database..."
     $CMD initdb
+    if [ -e "/variables.json" ]; then
+        $CMD variables -i /variables.json
+    fi
     exec $CMD webserver
   else
     sleep 10
@@ -89,6 +88,9 @@ then
   sed -i "s#broker_url = redis://redis:6379/1#broker_url = redis://$REDIS_PREFIX$REDIS_HOST:$REDIS_PORT/1#" "$AIRFLOW_HOME"/airflow.cfg
   echo "Initialize database..."
   $CMD initdb
+  if [ -e "/variables.json" ]; then
+      $CMD variables -i /variables.json
+  fi
   exec $CMD webserver &
   exec $CMD scheduler
 # By default we use SequentialExecutor
@@ -101,5 +103,8 @@ else
   sed -i "s#sql_alchemy_conn = postgresql+psycopg2://airflow:airflow@postgres/airflow#sql_alchemy_conn = sqlite:////usr/local/airflow/airflow.db#" "$AIRFLOW_HOME"/airflow.cfg
   echo "Initialize database..."
   $CMD initdb
+  if [ -e "/variables.json" ]; then
+      $CMD variables -i /variables.json
+  fi
   exec $CMD webserver
 fi

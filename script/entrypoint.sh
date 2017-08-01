@@ -106,5 +106,6 @@ else
   if [ -e "/variables.json" ]; then
       $CMD variables -i /variables.json
   fi
-  exec $CMD webserver
+  exec $CMD webserver &
+  exec $CMD scheduler
 fi

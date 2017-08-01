@@ -58,6 +58,9 @@ RUN set -ex \
         /usr/share/doc-base \
     && curl -fsSL https://get.docker.com/ | sh
 
+RUN curl -L https://github.com/docker/compose/releases/download/1.14.0/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose &&\
+    chmod +x /usr/local/bin/docker-compose
+
 COPY script/entrypoint.sh /entrypoint.sh
 COPY config/airflow.cfg ${AIRFLOW_HOME}/airflow.cfg
 
